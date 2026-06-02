@@ -9,6 +9,16 @@ const resultsCard = document.getElementById('resultsCard');
 const statusEl    = document.getElementById('status');
 const tablePanel  = document.getElementById('tab-table');
 const rawJson     = document.getElementById('rawJson');
+const pagination  = document.getElementById('pagination');
+const prevBtn     = document.getElementById('prevBtn');
+const nextBtn     = document.getElementById('nextBtn');
+const pageInfo    = document.getElementById('pageInfo');
+
+// Pagination state
+let lastParams  = null;
+let currentOffset = 0;
+let currentLimit  = 100;
+let totalResults  = 0;
 
 form.addEventListener('input', updatePreview);
 
@@ -50,23 +60,52 @@ clearBtn.addEventListener('click', () => {
   form.reset();
   updatePreview();
   resultsCard.style.display = 'none';
+  pagination.style.display = 'none';
+  lastParams = null;
 });
 
-form.addEventListener('submit', async (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
-
   const params = buildParams();
   if (!params.toString()) return;
+  lastParams = params;
+  executeQuery(params, 0);
+});
 
+prevBtn.addEventListener('click', () => {
+  if (!lastParams || currentOffset === 0) return;
+  executeQuery(lastParams, Math.max(0, currentOffset - currentLimit));
+});
+
+nextBtn.addEventListener('click', () => {
+  if (!lastParams) return;
+  executeQuery(lastParams, currentOffset + currentLimit);
+});
+
+async function executeQuery(params, offset) {
   spinner.style.display = 'block';
   submitBtn.disabled = true;
   resultsCard.style.display = 'none';
+  pagination.style.display = 'none';
+
+  const limit = parseInt(params.get('p.limit') || '100', 10);
+
+  // Build the request params with offset and guessTotal
+  const reqParams = new URLSearchParams(params);
+  reqParams.set('p.offset', offset);
+  reqParams.set('p.guessTotal', 'true');
 
   try {
-    const res = await fetch(`/query?${params.toString()}`);
+    const res = await fetch(`/query?${reqParams.toString()}`);
     const data = await res.json();
+
+    currentOffset = offset;
+    currentLimit  = limit;
+    totalResults  = data.total ?? 0;
+
     resultsCard.style.display = 'block';
     renderResults(res.status, data);
+    renderPagination();
   } catch (err) {
     resultsCard.style.display = 'block';
     statusEl.innerHTML = `<span class="badge badge-error">Error</span> ${err.message}`;
@@ -76,12 +115,28 @@ form.addEventListener('submit', async (e) => {
     spinner.style.display = 'none';
     submitBtn.disabled = false;
   }
-});
+}
+
+function renderPagination() {
+  const limit = currentLimit > 0 ? currentLimit : totalResults;
+  if (totalResults <= limit) {
+    pagination.style.display = 'none';
+    return;
+  }
+
+  const totalPages  = Math.ceil(totalResults / limit);
+  const currentPage = Math.floor(currentOffset / limit) + 1;
+
+  pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${totalResults.toLocaleString()} total)`;
+  prevBtn.disabled = currentPage <= 1;
+  nextBtn.disabled = currentPage >= totalPages;
+  pagination.style.display = 'flex';
+}
 
 function renderResults(httpStatus, data) {
   const isError = data.error || httpStatus >= 400;
-  const total = data.total ?? '—';
-  const hits  = Array.isArray(data.hits) ? data.hits : [];
+  const total   = data.total ?? '—';
+  const hits    = Array.isArray(data.hits) ? data.hits : [];
 
   statusEl.innerHTML = isError
     ? `<span class="badge badge-error">Error ${httpStatus}</span> ${data.error ?? 'Unexpected response'}`

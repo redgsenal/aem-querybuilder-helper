@@ -220,3 +220,33 @@ pre {
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+#pagination {
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dfe1e6;
+}
+
+#pagination button {
+  height: 2rem;
+  padding: 0 1rem;
+  background: #f4f5f7;
+  color: #344563;
+  font-size: .875rem;
+}
+
+#pagination button:hover:not(:disabled) { background: #ebecf0; }
+
+#pagination button:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+#pageInfo {
+  font-size: .875rem;
+  color: #344563;
+  font-weight: 600;
+}
