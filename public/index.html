@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AEM Query Builder</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>AEM Query Builder</h1>
+    <p>Runs against <strong>http://localhost:4502/bin/querybuilder.json</strong> as <code>admin</code></p>
+  </header>
+
+  <div class="card">
+    <h2>Query Parameters</h2>
+    <form id="queryForm" autocomplete="off">
+      <div class="fields">
+
+        <div class="field">
+          <label for="f-path">Path <code>path</code></label>
+          <input type="text" id="f-path" name="path" placeholder="/content" value="/content/bpi/ph/en" />
+        </div>
+
+        <div class="field">
+          <label for="f-type">Node Type <code>type</code></label>
+          <input type="text" id="f-type" name="type" placeholder="cq:Page" value="nt:unstructured" />
+        </div>
+
+        <div class="field">
+          <label for="f-property">Property <code>property</code></label>
+          <input type="text" id="f-property" name="property" placeholder="jcr:content/cq:template" value="sling:resourceType" />
+        </div>
+
+        <div class="field">
+          <label for="f-property-value">Property Value <code>property.value</code></label>
+          <input type="text" id="f-property-value" name="property.value" placeholder="/conf/mysite/.../template" value="bpi/components/" />
+        </div>
+
+        <div class="field">
+          <label for="f-limit">Limit <code>p.limit</code></label>
+          <input type="number" id="f-limit" name="p.limit" placeholder="10" min="-1" value="-1" />
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button type="submit" id="submitBtn">Run Query</button>
+        <button type="button" id="clearBtn">Clear</button>
+        <div class="spinner" id="spinner"></div>
+      </div>
+    </form>
+
+    <p class="query-preview" id="preview" style="margin-top:1rem"></p>
+  </div>
+
+  <div class="card" id="resultsCard" style="display:none">
+    <div id="status"></div>
+
+    <div class="tabs" style="margin-top:1rem">
+      <button class="tab active" data-tab="table">Hits</button>
+      <button class="tab" data-tab="raw">Raw JSON</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-table"></div>
+    <div class="tab-panel" id="tab-raw"><pre id="rawJson"></pre></div>
+  </div>
+
+</div>
+
+<script src="/assets/query-builder.js"></script>
+</body>
+</html>

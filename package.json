@@ -1,0 +1,17 @@
+{
+  "name": "aem-querybuilder",
+  "version": "1.0.0",
+  "description": "A fluent query builder for the AEM Query Builder API",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node app.js",
+    "example": "node examples/basic.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "keywords": ["aem", "query-builder", "adobe-experience-manager"],
+  "license": "MIT"
+}
