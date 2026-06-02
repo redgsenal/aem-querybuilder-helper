@@ -10,8 +10,13 @@
     "test": "node --test"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "node-fetch": "^2.7.0"
   },
-  "keywords": ["aem", "query-builder", "adobe-experience-manager"],
+  "keywords": [
+    "aem",
+    "query-builder",
+    "adobe-experience-manager"
+  ],
   "license": "MIT"
 }
