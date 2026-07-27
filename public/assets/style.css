@@ -71,7 +71,8 @@ label code {
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+select {
   height: 2.25rem;
   padding: 0 .625rem;
   border: 2px solid #dfe1e6;
@@ -147,6 +148,7 @@ button {
 
 .hits-table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   font-size: .875rem;
   margin-top: .75rem;
@@ -159,15 +161,26 @@ button {
   border-bottom: 2px solid #dfe1e6;
   font-weight: 600;
   color: #344563;
+  text-transform: lowercase;
+  font-size: .8125rem;
 }
 
 .hits-table td {
   padding: .5rem .75rem;
   border-bottom: 1px solid #f4f5f7;
-  word-break: break-all;
+  word-break: break-word;
+  white-space: normal;
 }
 
 .hits-table tr:hover td { background: #f8f9ff; }
+
+.hits-table td a {
+  color: #0052cc;
+  text-decoration: none;
+  font-weight: 600;
+  word-break: break-all;
+}
+.hits-table td a:hover { text-decoration: underline; }
 
 pre {
   background: #f4f5f7;

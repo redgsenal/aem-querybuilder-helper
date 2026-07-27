@@ -19,9 +19,18 @@
     <form id="queryForm" autocomplete="off">
       <div class="fields">
 
+        <div class="field full">
+          <label for="f-domain">Domain</label>
+          <select id="f-domain" name="_domain">
+            <option value="local">Local — http://localhost:4502</option>
+            <option value="sit1">SIT1 — https://author-p93552-e850488.adobeaemcloud.com</option>
+          </select>
+        </div>
+
         <div class="field">
           <label for="f-path">Path <code>path</code></label>
-          <input type="text" id="f-path" name="path" placeholder="/content" value="/content/bpi/ph/en" />
+          <input type="text" id="f-path" name="path" placeholder="/content" value="/content/bpi/ph/en/bpi-test" list="path-history" autocomplete="off" />
+          <datalist id="path-history"></datalist>
         </div>
 
         <div class="field">
@@ -36,7 +45,8 @@
 
         <div class="field">
           <label for="f-property-value">Property Value <code>property.value</code></label>
-          <input type="text" id="f-property-value" name="property.value" placeholder="/conf/mysite/.../template" value="bpi/components/" />
+          <input type="text" id="f-property-value" name="property.value" placeholder="/conf/mysite/.../template" value="bpi/components/" list="property-value-history" autocomplete="off" />
+          <datalist id="property-value-history"></datalist>
         </div>
 
         <div class="field">

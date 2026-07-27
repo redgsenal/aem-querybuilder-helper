@@ -6,24 +6,37 @@ const fetch = require('node-fetch');
 
 const app = express();
 const PORT = 3200;
-const AEM_HOST = 'http://localhost:4502';
-const AEM_AUTH = Buffer.from('admin:admin').toString('base64');
+
+const DOMAINS = {
+  local: {
+    host: 'http://localhost:4502',
+    auth: Buffer.from('admin:admin').toString('base64'),
+  },
+  sit1: {
+    host: 'https://author-p93552-e850488.adobeaemcloud.com',
+    auth: Buffer.from('zip-rssenal@bpi.com.ph:bvwR2LrJ4K.-pLm').toString('base64'),
+  },
+};
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Proxy GET /query → AEM /bin/querybuilder.json with Basic Auth
 app.get('/query', async (req, res) => {
-  // Drop empty params before forwarding
+  const domainKey = req.query._domain && DOMAINS[req.query._domain] ? req.query._domain : 'local';
+  const { host, auth } = DOMAINS[domainKey];
+
+  // Drop internal and empty params before forwarding
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(req.query)) {
-    if (value !== '') params.set(key, value);
+    if (key === '_domain' || value === '') continue;
+    params.set(key, value);
   }
 
-  const aemUrl = `${AEM_HOST}/bin/querybuilder.json?${params.toString()}`;
+  const aemUrl = `${host}/bin/querybuilder.json?${params.toString()}`;
 
   try {
     const response = await fetch(aemUrl, {
-      headers: { Authorization: `Basic ${AEM_AUTH}` },
+      headers: { Authorization: `Basic ${auth}` },
     });
     const data = await response.json();
     res.status(response.status).json(data);
