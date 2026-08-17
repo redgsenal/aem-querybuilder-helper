@@ -15,7 +15,7 @@
   </header>
 
   <div class="card">
-    <h2>Query Parameters</h2>
+    <h2>Query Parameters <a href="/help.html" target="_blank" rel="noopener" style="font-size:.8rem;font-weight:400;color:#0052cc;margin-left:.75rem;text-decoration:none;vertical-align:middle">? Help</a></h2>
     <form id="queryForm" autocomplete="off">
       <div class="fields">
 
@@ -35,12 +35,31 @@
 
         <div class="field">
           <label for="f-type">Node Type <code>type</code></label>
-          <input type="text" id="f-type" name="type" placeholder="cq:Page" value="nt:unstructured" />
+          <input type="text" id="f-type" name="type" placeholder="cq:Page" value="nt:unstructured" list="node-type-options" autocomplete="off" />
+          <datalist id="node-type-options">
+            <option value="cq:Page"></option>
+            <option value="cq:PageContent"></option>
+            <option value="dam:Asset"></option>
+            <option value="nt:unstructured"></option>
+            <option value="cq:Component"></option>
+            <option value="cq:Template"></option>
+            <option value="rep:User"></option>
+          </datalist>
         </div>
 
         <div class="field">
           <label for="f-property">Property <code>property</code></label>
-          <input type="text" id="f-property" name="property" placeholder="jcr:content/cq:template" value="sling:resourceType" />
+          <input type="text" id="f-property" name="property" placeholder="jcr:content/cq:template" value="sling:resourceType" list="property-options" autocomplete="off" />
+          <datalist id="property-options">
+            <option value="jcr:content/cq:template"></option>
+            <option value="jcr:content/sling:resourceType"></option>
+            <option value="sling:resourceType"></option>
+            <option value="jcr:content/jcr:title"></option>
+            <option value="jcr:content/cq:tags"></option>
+            <option value="jcr:content/jcr:lastModifiedBy"></option>
+            <option value="jcr:content/cq:lastReplicationAction"></option>
+            <option value="jcr:primaryType"></option>
+          </datalist>
         </div>
 
         <div class="field">

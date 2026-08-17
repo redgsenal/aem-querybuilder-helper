@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Query Builder — Help</title>
+  <link rel="stylesheet" href="/assets/style.css" />
+  <style>
+    .help-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      padding: 2rem 1rem;
+    }
+
+    .help-container header h1 { font-size: 1.5rem; font-weight: 700; color: #0052cc; }
+    .help-container header p  { margin-top: .25rem; font-size: .875rem; color: #5e6c84; }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0052cc;
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 2px solid #deebff;
+    }
+
+    .help-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .875rem;
+      table-layout: fixed;
+    }
+
+    .help-table th {
+      text-align: left;
+      padding: .5rem .75rem;
+      background: #f4f5f7;
+      border-bottom: 2px solid #dfe1e6;
+      font-weight: 600;
+      color: #344563;
+      text-transform: lowercase;
+      font-size: .8125rem;
+    }
+
+    .help-table td {
+      padding: .5rem .75rem;
+      border-bottom: 1px solid #f4f5f7;
+      word-break: break-word;
+      white-space: normal;
+      vertical-align: top;
+    }
+
+    .help-table tr:hover td { background: #f8f9ff; }
+
+    .help-table td code,
+    .help-table th code {
+      background: #f4f5f7;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: .8rem;
+      color: #344563;
+    }
+
+    .combo-table td:nth-child(1),
+    .combo-table td:nth-child(2),
+    .combo-table td:nth-child(3) { width: 22%; }
+    .combo-table td:nth-child(4) { width: 34%; }
+
+    .note {
+      background: #deebff;
+      border-left: 4px solid #0052cc;
+      padding: .75rem 1rem;
+      border-radius: 0 4px 4px 0;
+      font-size: .875rem;
+      color: #0747a6;
+    }
+
+    .tag {
+      display: inline-block;
+      background: #e3fcef;
+      color: #006644;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 20px;
+      vertical-align: middle;
+    }
+
+    .tag.orange { background: #fff3cd; color: #856404; }
+
+    h3 { font-size: .9375rem; font-weight: 700; color: #344563; margin: 1rem 0 .5rem; }
+  </style>
+</head>
+<body>
+<div class="help-container">
+
+  <header>
+    <h1>AEM Query Builder — Help</h1>
+    <p>Reference guide for fields, node types, properties, and common search combinations.</p>
+  </header>
+
+  <!-- FIELDS -->
+  <div class="card">
+    <div class="section-title">Fields</div>
+    <table class="help-table">
+      <thead>
+        <tr>
+          <th style="width:18%">Field</th>
+          <th style="width:22%">Query Parameter</th>
+          <th>Description</th>
+          <th style="width:28%">Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Domain</strong></td>
+          <td><em>internal only</em></td>
+          <td>Selects which AEM environment to query. Not forwarded to AEM — used by the proxy to pick the correct host and credentials.</td>
+          <td>Local, SIT1</td>
+        </tr>
+        <tr>
+          <td><strong>Path</strong></td>
+          <td><code>path</code></td>
+          <td>Restricts results to nodes under this JCR path. The query searches all descendants unless you add <code>path.exact=true</code>.</td>
+          <td><code>/content/bpi/ph/en</code></td>
+        </tr>
+        <tr>
+          <td><strong>Node Type</strong></td>
+          <td><code>type</code></td>
+          <td>Filters by JCR primary node type. Only nodes of exactly this type (or a subtype) are returned.</td>
+          <td><code>cq:Page</code></td>
+        </tr>
+        <tr>
+          <td><strong>Property</strong></td>
+          <td><code>property</code></td>
+          <td>The JCR property path to filter on, relative to each result node. Use slash notation for child nodes.</td>
+          <td><code>jcr:content/cq:template</code></td>
+        </tr>
+        <tr>
+          <td><strong>Property Value</strong></td>
+          <td><code>property.value</code></td>
+          <td>The value the property must match. Supports wildcards (<code>*</code>) when <code>property.operation=like</code> is set. Partial matches use <code>bpi/components/</code> style.</td>
+          <td><code>/conf/bpi/settings/wcm/templates/article-page</code></td>
+        </tr>
+        <tr>
+          <td><strong>Limit</strong></td>
+          <td><code>p.limit</code></td>
+          <td>Maximum number of results to return. Use <code>-1</code> to return all (use carefully on large repos).</td>
+          <td><code>100</code>, <code>-1</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- NODE TYPES -->
+  <div class="card">
+    <div class="section-title">Node Types</div>
+    <table class="help-table">
+      <thead>
+        <tr>
+          <th style="width:25%">Node Type</th>
+          <th>What it represents</th>
+          <th style="width:30%">Common use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>cq:Page</code></td>
+          <td>A page node in the content tree. Every AEM page is a <code>cq:Page</code> node. Its content lives in a child <code>jcr:content</code> node.</td>
+          <td>Find pages by template, tag, or title</td>
+        </tr>
+        <tr>
+          <td><code>cq:PageContent</code></td>
+          <td>The <code>jcr:content</code> node of a page. Holds all page properties (template, title, tags, replication status, etc.).</td>
+          <td>Query page properties directly without the <code>jcr:content/</code> prefix</td>
+        </tr>
+        <tr>
+          <td><code>dam:Asset</code></td>
+          <td>A file/asset in the DAM (Digital Asset Manager). Covers images, PDFs, videos, and other uploaded files.</td>
+          <td>Find assets by name, type, or metadata</td>
+        </tr>
+        <tr>
+          <td><code>nt:unstructured</code></td>
+          <td>A generic JCR node with no fixed schema. Most AEM component nodes (placed on a page) are of this type.</td>
+          <td>Find placed component instances by <code>sling:resourceType</code></td>
+        </tr>
+        <tr>
+          <td><code>cq:Component</code></td>
+          <td>A component definition node under <code>/apps</code>. Not content — this is the component blueprint.</td>
+          <td>List all registered components in an app</td>
+        </tr>
+        <tr>
+          <td><code>cq:Template</code></td>
+          <td>A page template definition under <code>/conf</code> or <code>/apps</code>.</td>
+          <td>List available templates for a site</td>
+        </tr>
+        <tr>
+          <td><code>rep:User</code></td>
+          <td>A user account node in the AEM repository (Jackrabbit/Oak security layer).</td>
+          <td>Find or audit user accounts</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PROPERTIES -->
+  <div class="card">
+    <div class="section-title">Common Properties</div>
+    <table class="help-table">
+      <thead>
+        <tr>
+          <th style="width:32%">Property</th>
+          <th>What it filters</th>
+          <th style="width:28%">Example value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>jcr:content/cq:template</code></td>
+          <td>The template used to create a page. Used with <code>cq:Page</code> node type.</td>
+          <td><code>/conf/bpi/settings/wcm/templates/article-page</code></td>
+        </tr>
+        <tr>
+          <td><code>jcr:content/sling:resourceType</code></td>
+          <td>The component type that renders a page's <code>jcr:content</code> node (i.e. the page component).</td>
+          <td><code>bpi/components/custom/pages/bpiPhPage</code></td>
+        </tr>
+        <tr>
+          <td><code>sling:resourceType</code></td>
+          <td>The component type of the node itself. Used with <code>nt:unstructured</code> to find placed component instances on pages.</td>
+          <td><code>bpi/components/herobanner</code></td>
+        </tr>
+        <tr>
+          <td><code>jcr:content/jcr:title</code></td>
+          <td>The title of a page as set in page properties.</td>
+          <td><code>Home</code>, <code>About Us</code></td>
+        </tr>
+        <tr>
+          <td><code>jcr:content/cq:tags</code></td>
+          <td>Tags applied to a page. Values use the tag namespace format.</td>
+          <td><code>bpi:segment/retail</code></td>
+        </tr>
+        <tr>
+          <td><code>jcr:content/jcr:lastModifiedBy</code></td>
+          <td>The AEM user ID who last modified the page.</td>
+          <td><code>admin</code>, <code>zip-rssenal@bpi.com.ph</code></td>
+        </tr>
+        <tr>
+          <td><code>jcr:content/cq:lastReplicationAction</code></td>
+          <td>The last publish/unpublish action performed on a page.</td>
+          <td><code>Activate</code>, <code>Deactivate</code></td>
+        </tr>
+        <tr>
+          <td><code>jcr:primaryType</code></td>
+          <td>The primary node type of the node itself. Useful for filtering within mixed-type results.</td>
+          <td><code>cq:Page</code>, <code>nt:unstructured</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- COMMON COMBINATIONS -->
+  <div class="card">
+    <div class="section-title">Common Search Combinations</div>
+
+    <div class="note" style="margin-bottom:1.25rem">
+      All examples assume a <strong>Path</strong> like <code>/content/bpi/ph/en</code> is set to scope the search.
+    </div>
+
+    <table class="help-table combo-table">
+      <thead>
+        <tr>
+          <th>Goal</th>
+          <th>Node Type</th>
+          <th>Property</th>
+          <th>Property Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Find pages using a specific template</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/cq:template</code></td>
+          <td>Full template path, e.g.<br><code>/conf/bpi/settings/wcm/templates/article-page</code></td>
+        </tr>
+        <tr>
+          <td>Find all pages using a page component</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/sling:resourceType</code></td>
+          <td><code>bpi/components/custom/pages/bpiPhPage</code></td>
+        </tr>
+        <tr>
+          <td>Find all placed instances of a component</td>
+          <td><code>nt:unstructured</code></td>
+          <td><code>sling:resourceType</code></td>
+          <td>Component path, e.g.<br><code>bpi/components/herobanner</code></td>
+        </tr>
+        <tr>
+          <td>Find all placed BPI components (any)</td>
+          <td><code>nt:unstructured</code></td>
+          <td><code>sling:resourceType</code></td>
+          <td><code>bpi/components/</code> <span class="tag orange">partial match</span></td>
+        </tr>
+        <tr>
+          <td>Find pages by title</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/jcr:title</code></td>
+          <td>Exact title text, e.g. <code>Home</code></td>
+        </tr>
+        <tr>
+          <td>Find pages tagged with a specific tag</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/cq:tags</code></td>
+          <td><code>bpi:segment/retail</code></td>
+        </tr>
+        <tr>
+          <td>Find pages last modified by a user</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/jcr:lastModifiedBy</code></td>
+          <td>AEM username, e.g.<br><code>zip-rssenal@bpi.com.ph</code></td>
+        </tr>
+        <tr>
+          <td>Find published pages</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/cq:lastReplicationAction</code></td>
+          <td><code>Activate</code></td>
+        </tr>
+        <tr>
+          <td>Find unpublished / deactivated pages</td>
+          <td><code>cq:Page</code></td>
+          <td><code>jcr:content/cq:lastReplicationAction</code></td>
+          <td><code>Deactivate</code></td>
+        </tr>
+        <tr>
+          <td>Find all assets in a DAM folder</td>
+          <td><code>dam:Asset</code></td>
+          <td><em>leave blank</em></td>
+          <td><em>leave blank</em></td>
+        </tr>
+        <tr>
+          <td>Find all registered components in an app</td>
+          <td><code>cq:Component</code></td>
+          <td><em>leave blank</em></td>
+          <td><em>Set Path to <code>/apps/bpi/components</code></em></td>
+        </tr>
+        <tr>
+          <td>Find all available templates</td>
+          <td><code>cq:Template</code></td>
+          <td><em>leave blank</em></td>
+          <td><em>Set Path to <code>/conf/bpi/settings/wcm/templates</code></em></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>About partial matches</h3>
+    <p style="font-size:.875rem;color:#344563;line-height:1.6">
+      By default AEM Query Builder uses an <strong>exact equals</strong> match on property values. To do a partial/contains match (e.g. find all components whose resourceType starts with <code>bpi/components/</code>), the underlying API requires adding <code>property.operation=like</code> with a <code>%</code> wildcard — this UI currently sends an exact match. For partial searches, use the Raw JSON tab to inspect what was returned, or query AEM's CRXDE query tool directly with <code>LIKE</code> syntax.
+    </p>
+  </div>
+
+  <!-- EXAMPLES -->
+  <div class="card">
+    <div class="section-title">Search Examples</div>
+
+    <div class="note" style="margin-bottom:1.25rem">
+      Each example below shows the exact field values to enter in the query builder. The <strong>Query String</strong> shows what gets sent to AEM's <code>/bin/querybuilder.json</code>.
+    </div>
+
+    <!-- COMPONENTS -->
+    <h3>🔧 Finding Component Instances</h3>
+    <p style="font-size:.875rem;color:#5e6c84;margin-bottom:.75rem">Find all places a specific component has been placed on pages.</p>
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/bpi/ph/en</code></td><td>Scope to site content root</td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>nt:unstructured</code></td><td>Placed component nodes are always <code>nt:unstructured</code></td></tr>
+        <tr><td><strong>Property</strong></td><td><code>sling:resourceType</code></td><td>Identifies which component it is</td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>bpi/components/herobanner</code></td><td>Exact component resource type path</td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:.5rem"><strong>Query string:</strong><br><code>type=nt:unstructured&path=/content/bpi/ph/en&property=sling:resourceType&property.value=bpi/components/herobanner&p.limit=100</code></div>
+    <p style="font-size:.8125rem;color:#5e6c84;margin-top:.5rem;margin-bottom:1.5rem">Change <code>herobanner</code> to any component name: <code>infocard</code>, <code>tabshorizontal</code>, <code>cardMediaProfile</code>, <code>map</code>, etc.</p>
+
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">Find all Banko components placed anywhere (any component under banko/)</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/banko</code></td><td></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>nt:unstructured</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><code>sling:resourceType</code></td><td></td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>banko/components/</code></td><td>Partial — returns all banko components</td></tr>
+      </tbody>
+    </table>
+
+    <!-- TEMPLATES -->
+    <h3>📄 Finding Pages by Template</h3>
+    <p style="font-size:.875rem;color:#5e6c84;margin-bottom:.75rem">Find all pages that were created using a specific template.</p>
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/bpi/ph/en</code></td><td></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>cq:Page</code></td><td>Pages only</td></tr>
+        <tr><td><strong>Property</strong></td><td><code>jcr:content/cq:template</code></td><td>Template stored on <code>jcr:content</code> child node</td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>/conf/bpi/settings/wcm/templates/article-page</code></td><td>Full template path</td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:.5rem"><strong>Query string:</strong><br><code>type=cq:Page&path=/content/bpi/ph/en&property=jcr:content/cq:template&property.value=/conf/bpi/settings/wcm/templates/article-page&p.limit=100</code></div>
+    <p style="font-size:.8125rem;color:#5e6c84;margin-top:.5rem;margin-bottom:.75rem">To find the template path, go to <strong>Tools → Templates</strong> in AEM and hover over a template to see its path, or check CRXDE at <code>/conf/{site}/settings/wcm/templates/</code>.</p>
+
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">List all available templates for a site</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/conf/bpi/settings/wcm/templates</code></td><td>Change <code>bpi</code> to your site config name</td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>cq:Template</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Property Value</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>-1</code></td><td>Return all templates</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:1.5rem"><strong>Query string:</strong><br><code>type=cq:Template&path=/conf/bpi/settings/wcm/templates&p.limit=-1</code></div>
+
+    <!-- TAGS -->
+    <h3>🏷️ Finding Pages by Tag</h3>
+    <p style="font-size:.875rem;color:#5e6c84;margin-bottom:.75rem">Find all pages tagged with a specific AEM tag.</p>
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/bpi/ph/en</code></td><td></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>cq:Page</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><code>jcr:content/cq:tags</code></td><td>Tags are multi-value properties on <code>jcr:content</code></td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>bpi:products/credit-cards</code></td><td>Tag ID in <code>namespace:category/tag</code> format</td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:.5rem"><strong>Query string:</strong><br><code>type=cq:Page&path=/content/bpi/ph/en&property=jcr:content/cq:tags&property.value=bpi:products/credit-cards&p.limit=100</code></div>
+    <p style="font-size:.8125rem;color:#5e6c84;margin-top:.5rem;margin-bottom:.75rem">Tag IDs follow the pattern <code>namespace:path/to/tag</code>. Find them in <strong>Tools → Tagging</strong> or in CRXDE under <code>/content/cq:tags/</code>.</p>
+
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">List all available tags under a namespace</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/cq:tags/bpi</code></td><td>Change <code>bpi</code> to your tag namespace</td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>cq:Tag</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Property Value</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>-1</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:1.5rem"><strong>Query string:</strong><br><code>type=cq:Tag&path=/content/cq:tags/bpi&p.limit=-1</code></div>
+
+    <!-- USERS -->
+    <h3>👤 Finding Users</h3>
+    <p style="font-size:.875rem;color:#5e6c84;margin-bottom:.75rem">Find AEM user accounts in the repository.</p>
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">Find all users</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/home/users</code></td><td>All AEM users live under <code>/home/users</code></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>rep:User</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Property Value</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:.75rem"><strong>Query string:</strong><br><code>type=rep:User&path=/home/users&p.limit=100</code></div>
+
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">Find a specific user by email / user ID</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/home/users</code></td><td></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>rep:User</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><code>rep:authorizableId</code></td><td>The user's login ID or email</td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>zip-rssenal@bpi.com.ph</code></td><td>Exact match</td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>10</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:1.5rem"><strong>Query string:</strong><br><code>type=rep:User&path=/home/users&property=rep:authorizableId&property.value=zip-rssenal@bpi.com.ph&p.limit=10</code></div>
+
+    <!-- ASSETS -->
+    <h3>🖼️ Finding DAM Assets</h3>
+    <p style="font-size:.875rem;color:#5e6c84;margin-bottom:.75rem">Find files and media in the Digital Asset Manager.</p>
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">Find all assets in a folder</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/dam/bpi-foundation</code></td><td>Scope to your DAM folder</td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>dam:Asset</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Property Value</strong></td><td><em>leave blank</em></td><td></td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:.75rem"><strong>Query string:</strong><br><code>type=dam:Asset&path=/content/dam/bpi-foundation&p.limit=100</code></div>
+
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">Find assets by file type (MIME type)</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/dam/bpi-foundation</code></td><td></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>dam:Asset</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><code>jcr:content/metadata/dc:format</code></td><td>MIME type stored in asset metadata</td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>image/png</code></td><td>Use <code>image/jpeg</code>, <code>application/pdf</code>, <code>video/mp4</code>, etc.</td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:.75rem"><strong>Query string:</strong><br><code>type=dam:Asset&path=/content/dam/bpi-foundation&property=jcr:content/metadata/dc:format&property.value=image/png&p.limit=100</code></div>
+
+    <table class="help-table" style="margin-bottom:1.5rem">
+      <thead>
+        <tr><th colspan="3">Find assets by title / filename keyword</th></tr>
+        <tr><th style="width:20%">Field</th><th style="width:40%">Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Path</strong></td><td><code>/content/dam/bpi-foundation</code></td><td></td></tr>
+        <tr><td><strong>Node Type</strong></td><td><code>dam:Asset</code></td><td></td></tr>
+        <tr><td><strong>Property</strong></td><td><code>jcr:content/metadata/dc:title</code></td><td>Asset title as set in asset properties</td></tr>
+        <tr><td><strong>Property Value</strong></td><td><code>banner</code></td><td>Exact title match</td></tr>
+        <tr><td><strong>Limit</strong></td><td><code>100</code></td><td></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-bottom:1.5rem"><strong>Query string:</strong><br><code>type=dam:Asset&path=/content/dam/bpi-foundation&property=jcr:content/metadata/dc:title&property.value=banner&p.limit=100</code></div>
+
+  </div>
+
+  <!-- TIPS -->
+  <div class="card">
+    <div class="section-title">Tips</div>
+    <ul style="font-size:.875rem;color:#344563;line-height:2;padding-left:1.25rem">
+      <li>Use <strong>Limit = -1</strong> only on narrow, well-scoped paths — returning all results on a broad path can be very slow.</li>
+      <li>The <strong>Path</strong> and <strong>Property Value</strong> fields remember your previous entries — click into the field to see history.</li>
+      <li>Switch the <strong>Domain</strong> dropdown before running to query Local or SIT1 without changing anything else.</li>
+      <li>Use the <strong>Raw JSON</strong> tab to see the full AEM response including total count, offset, and all node properties returned.</li>
+      <li>The <strong>Sites URL</strong> column in results opens the page directly in the AEM page editor for that environment.</li>
+      <li>The <code>jcr:content/</code> prefix is needed when the property lives on the page's content node, not the page node itself. When using <code>cq:PageContent</code> as node type, drop the prefix.</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

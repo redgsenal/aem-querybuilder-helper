@@ -18,7 +18,7 @@ const DOMAINS = {
   },
 };
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { etag: false, maxAge: 0 }));
 
 // Proxy GET /query → AEM /bin/querybuilder.json with Basic Auth
 app.get('/query', async (req, res) => {
